@@ -4,7 +4,7 @@
 # Copyright (C) 2022 https://github.com/toneywoo/orangepi-action-build
 #==========================================================================
 
-name: Build armbian
+name: Build armbian for OP3lts
 
 on:
   repository_dispatch:
