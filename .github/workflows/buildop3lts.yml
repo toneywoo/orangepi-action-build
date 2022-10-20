@@ -65,9 +65,8 @@ jobs:
           cd build/
           # sudo ./compile.sh RELEASE=${{ env.ARMBIAN_RELEASE }} BOARD=orangepi3-lts BRANCH=current BUILD_DESKTOP=yes HOST=armbian EXPERT=yes \
           #                  BUILD_MINIMAL=no KERNEL_ONLY=no KERNEL_CONFIGURE=no CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE="sha,gz"
-          sudo ./compile.sh RELEASE=bullseye BOARD=orangepi3-lts BRANCH=current BUILD_DESKTOP=yes \
-                        DESKTOP_ENVIRONMENT=xfce DESKTOP_APPGROUPS_SELECTED=remote_desktop HOST=armbian EXPERT=yes BUILD_MINIMAL=no \
-                        KERNEL_ONLY=no KERNEL_CONFIGURE=no CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE="sha,gz"
+          #参考这个来选择桌面配置参数
+          sudo ./compile.sh RELEASE=bullseye BOARD=orangepi3-lts BRANCH=current BUILD_DESKTOP=yes DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_basic DESKTOP_APPGROUPS_SELECTED=remote_desktop HOST=armbian EXPERT=yes BUILD_MINIMAL=no KERNEL_ONLY=no KERNEL_CONFIGURE=no CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE="sha,gz"
           echo "build_tag=Armbian_Aml_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
       - name: Upload Armbian image to Release
