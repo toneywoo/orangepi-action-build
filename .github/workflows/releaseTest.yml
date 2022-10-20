@@ -22,7 +22,7 @@ jobs:
      - name: releseirt
        uses: ncipollo/release-action@v1
        with:
-          tag: "tag nimashadiao"
+          tag: "ni-ma-sha-diao"
           name: "shit"
 #artifacts: "release.tar.gz,foo/*.txt"
           bodyFile: "release.0.0.0.1.zip"
