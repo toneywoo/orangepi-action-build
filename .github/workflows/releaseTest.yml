@@ -12,12 +12,12 @@ jobs:
       contents: write
     steps:
      - name: checkout
-       uses: actions/checkout@v2
-       run: zip -r release.0.0.0.1.zip ./
-       
-     - name: RE
-       uses: ncipollo/release-action@v1
-        with:
+     - uses: actions/checkout@v2
+     - run: |
+         zip -r release.0.0.0.1.zip ./
+         ls -l -c
+     - uses: ncipollo/release-action@v1
+     - with:
           tag: "tag nimashadiao"
           name: "shit"
           artifacts: "release.tar.gz,foo/*.txt"
