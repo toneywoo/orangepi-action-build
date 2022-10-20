@@ -24,6 +24,6 @@ jobs:
        with:
           tag: "ni-ma-sha-diao"
           name: "shit"
-          artifacts: "release.tar.gz,foo/*.txt"
+          artifacts: "release.0.0.0.1.zip,release.tar.gz,foo/*.txt"
           bodyFile: "README.md"
           token: ${{ secrets.GITHUB_TOKEN }}
