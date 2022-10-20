@@ -13,11 +13,15 @@ jobs:
     permissions:
       contents: write
     steps:
+    - name: Checkout source
     - uses: actions/checkout@v2
+    - name: Zip the Build
+    - run: zip -r release.0.0.0.1.zip ./
+    - name: upload to release
     - uses: ncipollo/release-action@v1
       with:
         tag: "tag nimashadiao"
         name: "shit"
         artifacts: "release.tar.gz,foo/*.txt"
-        bodyFile: "body.md"
+        bodyFile: "release.0.0.0.1.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
