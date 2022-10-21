@@ -63,8 +63,8 @@ jobs:
         run: |
           # Compile method and parameter description: https://docs.armbian.com/Developer-Guide_Build-Options
           cd orangepi-build/
-          sudo ./build.sh RELEASE=jammy BOARD=orangepi3-lts BRANCH=current BUILD_DESKTOP=yes DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_basic DESKTOP_APPGROUPS_SELECTED=remote_desktop HOST=armbian EXPERT=yes BUILD_MINIMAL=no KERNEL_ONLY=no KERNEL_CONFIGURE=no CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE="sha,gz" USE_GITHUB_UBOOT_MIRROR=yes
-          echo "build_tag=Armbian_king_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
+          sudo ./build.sh RELEASE=${{ env.ARMBIAN_RELEASE }} BOARD=orangepi3-lts BRANCH=current BUILD_DESKTOP=yes DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_basic DESKTOP_APPGROUPS_SELECTED=remote_desktop HOST=armbian EXPERT=yes BUILD_MINIMAL=no KERNEL_ONLY=no KERNEL_CONFIGURE=no CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE="sha,gz" USE_GITHUB_UBOOT_MIRROR=yes
+          echo "build_tag=Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
       - name: Upload Armbian image to Release
         uses: ncipollo/release-action@main
