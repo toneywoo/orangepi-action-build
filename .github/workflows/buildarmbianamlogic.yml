@@ -4,7 +4,7 @@
 # Copyright (C) 2022 https://github.com/toneywoo/orangepi-action-build
 #==========================================================================
 
-name: Build armbian
+name: Build armbian odroidc4 s905x3
 
 on:
   repository_dispatch:
@@ -18,67 +18,6 @@ on:
         options:
           - jammy
           - bullseye
-      armbian_soc:
-        description: "Select Amlogic SoC."
-        required: false
-        default: "all"
-        type: choice
-        options:
-          - all
-          - s905x3_s905d_s912
-          - a311d
-          - s922x
-          - s922x-n2
-          - s922x-reva
-          - s905x3
-          - s905x3-b
-          - s905x2
-          - s905x2-km3
-          - s912
-          - s912-m8s
-          - s905d
-          - s905d-ki
-          - s905x
-          - s905w
-          - s905
-          - s905l3a
-      armbian_kernel:
-        description: "Select kernel version."
-        required: false
-        default: "5.10.135_5.15.50"
-        type: choice
-        options:
-          - 5.4.210_5.10.135_5.15.50
-          - 5.4.210_5.10.135
-          - 5.10.135_5.15.50
-          - 5.15.50_6.0.1
-          - 5.4.210
-          - 5.10.135
-          - 5.15.50
-          - 5.19.1
-          - 6.0.1
-      auto_kernel:
-        description: "Auto use the latest kernel."
-        required: false
-        default: true
-        type: boolean
-      armbian_size:
-        description: "Set armbian rootfs size(Unit: MiB)."
-        required: false
-        default: "2560"
-      armbian_fstype:
-        description: "Select armbian rootfs type."
-        required: false
-        default: "ext4"
-        type: choice
-        options:
-          - ext4
-          - btrfs
-      armbian_sign:
-        description: "Set armbian custom name."
-        required: false
-        default: ""
-
 env:
   TZ: America/New_York
 
@@ -96,11 +35,11 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc 2>/dev/null
-          sudo -E apt-get -qq update
-          sudo -E apt-get -qq install -y $(curl -fsSL https://is.gd/depend_ubuntu2204_armbian)
-          sudo -E apt-get -qq autoremove --purge
-          sudo -E apt-get -qq clean
+          #sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc 2>/dev/null
+          #sudo -E apt-get -qq update
+          #sudo -E apt-get -qq install -y $(curl -fsSL https://is.gd/depend_ubuntu2204_armbian)
+          #sudo -E apt-get -qq autoremove --purge
+          #sudo -E apt-get -qq clean
           sudo timedatectl set-timezone "${TZ}"
           echo "ARMBIAN_RELEASE=${{ github.event.inputs.set_release }}" >> ${GITHUB_ENV}
           echo "status=success" >> ${GITHUB_OUTPUT}
@@ -108,7 +47,7 @@ jobs:
         id: down
         if: ${{ steps.init.outputs.status }} == 'success' && !cancelled()
         run: |
-          git clone --depth 1 https://github.com/armbian/build.git
+          git clone https://github.com/armbian/build.git
           echo "status=success" >> ${GITHUB_OUTPUT}
       - name: Compile Armbian [ ${{ env.ARMBIAN_RELEASE }} ]
         id: compile
@@ -116,7 +55,7 @@ jobs:
         run: |
           # Compile method and parameter description: https://docs.armbian.com/Developer-Guide_Build-Options
           cd build/
-          sudo ./compile.sh  BOARD=odroidc4 BRANCH=current RELEASE=jammy BUILD_MINIMAL=no BUILD_DESKTOP=yes KERNEL_ONLY=no KERNEL_CONFIGURE=prebuilt DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="desktop_tools remote_desktop" COMPRESS_OUTPUTIMAGE=sha,gz
+          sudo ./compile.sh  BOARD=odroidc4 BRANCH=current RELEASE=jammy BUILD_MINIMAL=no BUILD_DESKTOP=yes KERNEL_ONLY=no KERNEL_CONFIGURE=prebuilt DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="desktop_tools remote_desktop" COMPRESS_OUTPUTIMAGE=sha,gpg,gz EXTERNAL=yes  USE_GITHUB_UBOOT_MIRROR=yes
           echo "build_tag=Armbian_Aml_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
       - name: Upload Armbian image to Release
