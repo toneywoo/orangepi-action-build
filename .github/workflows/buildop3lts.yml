@@ -67,7 +67,7 @@ jobs:
           #                  BUILD_MINIMAL=no KERNEL_ONLY=no KERNEL_CONFIGURE=no CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE="sha,gz"
           #参考这个来选择桌面配置参数
           #sudo ./compile.sh RELEASE=bullseye BOARD=orangepi3-lts BRANCH=current BUILD_DESKTOP=yes DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_basic DESKTOP_APPGROUPS_SELECTED=remote_desktop HOST=armbian EXPERT=yes BUILD_MINIMAL=no KERNEL_ONLY=no KERNEL_CONFIGURE=no CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE="sha,gz"
-          sudo ./compile.sh  BOARD=orangepi3-lts BRANCH=current RELEASE=${{ env.ARMBIAN_RELEASE }} BUILD_MINIMAL=no BUILD_DESKTOP=yes KERNEL_ONLY=no KERNEL_CONFIGURE=prebuilt DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="desktop_tools,remote_desktop" COMPRESS_OUTPUTIMAGE=sha,gz USE_GITHUB_UBOOT_MIRROR=yes
+          sudo ./compile.sh  BOARD=orangepi3-lts BRANCH=current RELEASE=${{ env.ARMBIAN_RELEASE }} BUILD_MINIMAL=no BUILD_DESKTOP=yes KERNEL_ONLY=no KERNEL_CONFIGURE=prebuilt DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="desktop_tools,remote_desktop" COMPRESS_OUTPUTIMAGE=sha,gz EXTERNAL=yes USE_GITHUB_UBOOT_MIRROR=yes
           echo "build_tag=Armbian_op3lts_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
       - name: Upload Armbian image to Release
