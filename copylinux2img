@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+#将当前的运行的armbian-linux复制到一个镜像文件里面
+#
+#
+
+#参考:shell 输出颜色的字体 https://www.cnblogs.com/nanruosen/p/16246506.html
+#参考: linux下挂载镜像文件 https://blog.csdn.net/weixin_29668721/article/details/116813447
+#参考:多行注释 https://zhuanlan.zhihu.com/p/54494213
+#更改分区UUID https://www.dandelioncloud.cn/article/details/1517735553230565378
+
+#export LC_ALL="en_US.UTF-8"
+
+    BOOT_DEV="/dev/mmcblk0"
+    ROOT_FS_DEV="/dev/mmcblk0p1"
+    DEST_IMG="/tmp/OPH6PC3LTS-EVMV4-$(date +"%m.%d.%H%M").img"  #"/media/tony/usb/OPH6PC3LTS-EVMV4-20221023-01.img"
+    DEST_IMG_SIZE=7168 #具体需要再计算,单位:MB $((7 * 1024)) = 7168MB =7GB
+    DEST_ROOTFS_TYPE="ext4"
+    EXCLUDE="/usr/lib/nand-sata-install/exclude.txt"
+    OFFSET=4 #4MB 单位:MB 
+
+#echo $BOOT_DEV
+#echo $ROOT_FS_DEV
+#echo $DEST_IMG
+#echo $DEST_IMG_SIZE
+#echo $DEST_ROOTFS_TYPE
+#echo $EXCLUDE
+#echo $OFFSET
+
+    echo -e "Creating blank image for rootfs \033[31m $DEST_IMG_SIZE\033[0m MiB"
+    rm /tmp/OPH6PC3LTS-EVMV4* -fr
+    DEST_IMG_SIZE=100 #测试一下 用100M数据
+    dd if=/dev/zero bs=1M status=none count=$DEST_IMG_SIZE | pv -p -b -r -s $(( $DEST_IMG_SIZE * 1024 * 1024 )) -N "[ .... ] dd" | dd status=none of=$DEST_IMG
+    echo -e "Write blank data to image file  \033[31m $DEST_IMG\033[0m success."
+
+#create rootfs partation type ext4.
+    parted -s $DEST_IMG -- mklabel "msdos"
+    rootstart=$(($OFFSET * 2048)) #4*2048=8192个扇区,每个扇区的尺寸是2048=2K,2K*2K = 4MB
+    #parted -s $DEST_IMG -- mkpart primary ext4 ${rootstart}s 100%
+    parted -s $DEST_IMG -- mkpart primary ext4 $OFFSET 100%
+#echo -e "\033[32m 绿色字\033[0m"
+    echo -e "\033[32m partation\033[0m image file  \033[31m $DEST_IMG\033[0m success."
+
+    LOOP=$(losetup -f)
+    
+    echo -e "\033[32m losetup\033[0m $LOOP - \033[31m $DEST_IMG\033[0m ."
+    losetup $LOOP $DEST_IMG
+    echo -e "\033[32m partprobe\033[0m - \033[31m $LOOP\033[0m ."
+    partprobe $LOOP
+
+    #check_loop_device ${LOOP}p1
+    # mkfs.${mkfs[$ROOTFS_TYPE]} ${mkopts[$ROOTFS_TYPE]} $rootdevice
+    mkfs.ext4 -q -m 2 -O ^64bit,^metadata_csum ${LOOP}p1
+    tune2fs -o journal_data_writeback ${LOOP}p1 > /dev/null
+
+    #mount -o loop,offset=8192 disk.img /tmp/looprootfs 
+    MOUNT="/tmp/looprootfs"
+    rm ${MOUNT} -fr
+    mkdir ${MOUNT}
+    mount  ${LOOP}p1 ${MOUNT}/
+
+
+
+    umount -l "${MOUNT}" >/dev/null 2>&1
+# umount /dev/sdb1
+# tune2fs /dev/sdb1 -U random /dev/sdb1 # blkid | grep sdb1
+# tune2fs -U random /dev/loop0p1
+# tune2fs -U $(blkid -s UUID -o value /dev/mmcblk0p1) /dev/loop0p1
+#将镜像上的分区UUID修改成和系统的ROOT分区UUID一样,就不用修改uboot和fstab的参数了.
+tune2fs -U $(blkid -s UUID -o value $ROOT_FS_DEV) ${LOOP}p1 
+
+losetup -d "${LOOP}" >/dev/null 2>&1
