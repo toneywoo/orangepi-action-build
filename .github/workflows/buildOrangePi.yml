@@ -82,6 +82,6 @@ jobs:
         with:
           tag: ${{ steps.compile.outputs.build_tag }}
           name: "OPI3LTS-RELEASE"
-          artifacts: "*.zip"
+          artifacts: "scripts.zip"
           #allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
