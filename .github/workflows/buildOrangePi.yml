@@ -26,8 +26,6 @@ on:
         options:
           - ext4
           - btrfs
-env:
-  TZ: America/New_York
 
 jobs:
   build:
