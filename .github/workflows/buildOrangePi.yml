@@ -62,19 +62,17 @@ jobs:
         if: ${{ steps.down.outputs.status }} == 'success' && !cancelled()
         run: |
           # Compile method and parameter description: https://docs.armbian.com/Developer-Guide_Build-Options
-          #cp ./
           cd orangepi-build/
-          pwd
-          #tree -a
           #sudo ./build.sh RELEASE=${{ env.ARMBIAN_RELEASE }} BOARD=orangepi3-lts BRANCH=current BUILD_DESKTOP=yes DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_basic DESKTOP_APPGROUPS_SELECTED=remote_desktop HOST=armbian EXPERT=yes BUILD_MINIMAL=no KERNEL_ONLY=no KERNEL_CONFIGURE=no CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE="sha,gz" USE_GITHUB_UBOOT_MIRROR=yes
-          #sudo ./build.sh  BOARD=orangepi3-lts BRANCH=next BUILD_OPT=image RELEASE=jammy BUILD_MINIMAL=no BUILD_DESKTOP=yes KERNEL_CONFIGURE=no DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers desktop_tools remote_desktop" COMPRESS_OUTPUTIMAGE=sha,img 
+          sudo ./build.sh  BOARD=orangepi3-lts BRANCH=next BUILD_OPT=image RELEASE=jammy BUILD_MINIMAL=no BUILD_DESKTOP=yes KERNEL_CONFIGURE=no DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers desktop_tools remote_desktop" COMPRESS_OUTPUTIMAGE=sha,img 
           echo "build_tag=Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
-          #zip -r ${GITHUB_OUTPUT}.zip output/images/
+          ZIPFILE="Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")"
+          zip -r ZIPFILE.zip output/images/
+          #pwd
+          #zip -r Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M").zip scripts/
+          #zip -r scripts.zip scripts/
           pwd
-          zip -r Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M").zip scripts/
-          zip -r scripts.zip scripts/
           ls
-          pwd
           echo "status=success" >> ${GITHUB_OUTPUT}
       - name: Upload Armbian image to Release
         uses: ncipollo/release-action@v1
