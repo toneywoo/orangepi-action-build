@@ -11,16 +11,23 @@
 
 #export LC_ALL="en_US.UTF-8"
 
-    BOOT_DEV="/dev/mmcblk0"
-    ROOT_FS_DEV="/dev/mmcblk0p1"
-    DEST_IMG="/tmp/OPH6PC3LTS-EVMV4-$(date +"%m.%d.%H%M").img"  #"/media/tony/usb/OPH6PC3LTS-EVMV4-20221023-01.img"
+    #BOOT_DEV="/dev/mmcblk0"
+    #ROOT_FS_DEV="/dev/mmcblk0p1"
+    #ROOT_FS_PATH="/" #末尾必须带上'/'
+    #DEST_IMG="/tmp/OPH6PC3LTS-EVMV4-$(date +"%m.%d.%H%M").img"  #"/media/tony/usb/OPH6PC3LTS-EVMV4-20221023-01.img"
+
+    BOOT_DEV="/dev/sdb"
+    ROOT_FS_DEV="/dev/sdb1"
+    ROOT_FS_PATH="/media/tony/3ad1e1b0-e5b3-45cd-9357-e3777e0723d6/" #末尾必须带上'/'
+    DEST_IMG="/dev/shm/OPH6PC3LTS-EVMV4-20221025-01.img"  #"/media/tony/usb/OPH6PC3LTS-EVMV4-20221023-01.img"
+
     DEST_IMG_SIZE=7168 #具体需要再计算,单位:MB $((7 * 1024)) = 7168MB =7GB
     DEST_ROOTFS_TYPE="ext4"
-    EXCLUDE="/usr/lib/nand-sata-install/exclude.txt"
     OFFSET=4 #4MB 单位:MB 
 
 #echo $BOOT_DEV
 #echo $ROOT_FS_DEV
+#echo $ROOT_FS_PATH
 #echo $DEST_IMG
 #echo $DEST_IMG_SIZE
 #echo $DEST_ROOTFS_TYPE
@@ -29,8 +36,13 @@
 
     echo -e "Creating blank image for rootfs \033[31m $DEST_IMG_SIZE\033[0m MiB"
     rm /tmp/OPH6PC3LTS-EVMV4* -fr
-    DEST_IMG_SIZE=100 #测试一下 用100M数据
-    dd if=/dev/zero bs=1M status=none count=$DEST_IMG_SIZE | pv -p -b -r -s $(( $DEST_IMG_SIZE * 1024 * 1024 )) -N "[ .... ] dd" | dd status=none of=$DEST_IMG
+    #DEST_IMG_SIZE=1024 #测试一下 用100M数据
+#实测复制前面的4MB数据会导致镜像文件的尺寸也变成4MB,所以尝试一下将写入空数据的命令放在后面
+#单独复制boot设备的前面4M的数据,就是为了复制uboot到目标镜像文件上,实际uboot并没有这么大,只是管它呢,多复制点也不会有什么后果.这么做就是为了简单
+#文件实际尺寸是DEST_IMG_SIZE + OFFSET
+    dd if=$BOOT_DEV bs=1M count=$OFFSET of=$DEST_IMG
+    echo -e "Write bootdev fisrt $OFFSET MB to image file  \033[31m $DEST_IMG\033[0m success."
+    dd if=/dev/zero bs=1M status=none count=$DEST_IMG_SIZE | pv -p -b -r -s $(( $DEST_IMG_SIZE * 1024 * 1024 )) -N "[ .... ] dd" | dd status=none bs=1M  seek=$OFFSET of=$DEST_IMG
     echo -e "Write blank data to image file  \033[31m $DEST_IMG\033[0m success."
 
 #create rootfs partation type ext4.
@@ -54,12 +66,54 @@
     tune2fs -o journal_data_writeback ${LOOP}p1 > /dev/null
 
     #mount -o loop,offset=8192 disk.img /tmp/looprootfs 
-    MOUNT="/tmp/looprootfs"
+    #mount -o loop,offset=8192 ./OPH6PC3LTS-EVMV4-10.24.2017.img /tmp/looprootfs
+    MOUNT="/dev/shm/looprootfs"
     rm ${MOUNT} -fr
     mkdir ${MOUNT}
     mount  ${LOOP}p1 ${MOUNT}/
+    #ls ${MOUNT} -la
+    mkdir -p ${MOUNT}/dev
+    mkdir -p ${MOUNT}/proc
+    mkdir -p ${MOUNT}/sys
+    mkdir -p ${MOUNT}/media
+    mkdir -p ${MOUNT}/mnt
+    mkdir -p ${MOUNT}/run
+    mkdir -p ${MOUNT}/tmp
+    mkdir -p ${MOUNT}/srv
+    mkdir -p ${MOUNT}/var
 
+    mkdir -p ${MOUNT}/var/log
+    mkdir -p ${MOUNT}/var/log.hdd
+    chown root:syslog ${MOUNT}/var/log
+    chown root:syslog ${MOUNT}/var/log.hdd
 
+    cp -r ${ROOT_FS_PATH}boot ${MOUNT}
+    cp -r ${ROOT_FS_PATH}bin ${MOUNT}
+    cp -r ${ROOT_FS_PATH}etc ${MOUNT}/
+    cp -r ${ROOT_FS_PATH}root ${MOUNT}/
+    cp -r ${ROOT_FS_PATH}lib ${MOUNT}/
+    cp -r ${ROOT_FS_PATH}opt ${MOUNT}/
+    cp -r ${ROOT_FS_PATH}sbin ${MOUNT}/
+    cp -r ${ROOT_FS_PATH}selinux ${MOUNT}/
+    cp -r ${ROOT_FS_PATH}usr ${MOUNT}/
+    cp -r ${ROOT_FS_PATH}sbin ${MOUNT}/
+    cp -r ${ROOT_FS_PATH}home ${MOUNT}/
+
+    cp -r ${ROOT_FS_PATH}var/backups  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/cache  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/crash  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/lib  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/local  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/lock  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/mail  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/opt  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/run  ${MOUNT}/var/
+#    snap  
+    cp -r ${ROOT_FS_PATH}var/spool  ${MOUNT}/var/
+    cp -r ${ROOT_FS_PATH}var/tmp  ${MOUNT}/var/
+
+    echo -e "\033[32m cp files to \033[0m - \033[31m ${MOUNT}\033[0m ."
+    #ls ${MOUNT} -la
 
     umount -l "${MOUNT}" >/dev/null 2>&1
 # umount /dev/sdb1
@@ -67,6 +121,6 @@
 # tune2fs -U random /dev/loop0p1
 # tune2fs -U $(blkid -s UUID -o value /dev/mmcblk0p1) /dev/loop0p1
 #将镜像上的分区UUID修改成和系统的ROOT分区UUID一样,就不用修改uboot和fstab的参数了.
-tune2fs -U $(blkid -s UUID -o value $ROOT_FS_DEV) ${LOOP}p1 
+    tune2fs -U $(blkid -s UUID -o value $ROOT_FS_DEV) ${LOOP}p1 
 
-losetup -d "${LOOP}" >/dev/null 2>&1
+    losetup -d "${LOOP}" >/dev/null 2>&1
