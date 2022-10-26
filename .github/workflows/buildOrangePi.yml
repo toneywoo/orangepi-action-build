@@ -68,7 +68,7 @@ jobs:
           cp -f ../configuration.sh ./scripts/
           sudo ./build.sh  BOARD=orangepi3-lts BRANCH=next BUILD_OPT=image RELEASE=jammy BUILD_MINIMAL=no \
           BUILD_DESKTOP=yes KERNEL_CONFIGURE=no DESKTOP_ENVIRONMENT=xfce \
-          DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers desktop_tools remote_desktop" \
+          DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers,desktop_tools,remote_desktop" \
           COMPRESS_OUTPUTIMAGE=sha,img
           
           echo "build_tag=Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
