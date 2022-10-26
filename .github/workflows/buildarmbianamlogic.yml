@@ -55,7 +55,13 @@ jobs:
         run: |
           # Compile method and parameter description: https://docs.armbian.com/Developer-Guide_Build-Options
           cd build/
-          sudo ./compile.sh  BOARD=odroidc4 BRANCH=current RELEASE=jammy BUILD_MINIMAL=no BUILD_DESKTOP=yes KERNEL_ONLY=no KERNEL_CONFIGURE=prebuilt DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="desktop_tools remote_desktop" COMPRESS_OUTPUTIMAGE=sha,gpg,gz EXTERNAL=yes  USE_GITHUB_UBOOT_MIRROR=yes
+          sudo ./compile.sh  BOARD=odroidc4 BRANCH=current RELEASE=${{ env.ARMBIAN_RELEASE }} \
+          BUILD_MINIMAL=no BUILD_DESKTOP=yes \
+          KERNEL_ONLY=no KERNEL_CONFIGURE=prebuilt DESKTOP_ENVIRONMENT=xfce \
+          DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base \
+          DESKTOP_APPGROUPS_SELECTED="browsers,desktop_tools,remote_desktop" \
+          COMPRESS_OUTPUTIMAGE=sha,gpg,gz EXTERNAL=yes  USE_GITHUB_UBOOT_MIRROR=yes \
+          NO_APT_CACHER="yes"
           echo "build_tag=Armbian_S905X3_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
       - name: Upload Armbian image to Release
