@@ -63,13 +63,14 @@ jobs:
         run: |
           # Compile method and parameter description: https://docs.armbian.com/Developer-Guide_Build-Options
           cd orangepi-build/
-          #mkdir -p userpatches
+          mkdir -p userpatches
           #cp ../config-default.conf ./userpatches/
-          cp -f ../configuration.sh ./scripts/
+          cp ../config-example.conf ./userpatches/
+          #cp -f ../configuration.sh ./scripts/
           sudo ./build.sh  BOARD=orangepi3-lts BRANCH=next BUILD_OPT=image RELEASE=jammy BUILD_MINIMAL=no \
           BUILD_DESKTOP=yes KERNEL_CONFIGURE=no DESKTOP_ENVIRONMENT=xfce \
           DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers,desktop_tools,remote_desktop" \
-          COMPRESS_OUTPUTIMAGE=sha,img
+          COMPRESS_OUTPUTIMAGE=sha,img,gz
           
           echo "build_tag=Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           ZIPFILE="Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")"
