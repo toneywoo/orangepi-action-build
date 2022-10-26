@@ -279,11 +279,11 @@ DEBIAN_MIRROR='deb.debian.org/debian'
 DEBIAN_SECURTY='security.debian.org/'
 UBUNTU_MIRROR='ports.ubuntu.com/'
 
-#if [[ $DOWNLOAD_MIRROR == china ]] ; then
-#	DEBIAN_MIRROR='mirrors.tuna.tsinghua.edu.cn/debian'
-#	DEBIAN_SECURTY='mirrors.tuna.tsinghua.edu.cn/debian-security'
-#	UBUNTU_MIRROR='mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/'
-#fi
+if [[ $DOWNLOAD_MIRROR == china ]] ; then
+	DEBIAN_MIRROR='mirrors.tuna.tsinghua.edu.cn/debian'
+	DEBIAN_SECURTY='mirrors.tuna.tsinghua.edu.cn/debian-security'
+	UBUNTU_MIRROR='mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/'
+fi
 
 # For user override
 if [[ -f $USERPATCHES_PATH/lib.config ]]; then
