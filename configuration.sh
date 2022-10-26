@@ -5,7 +5,7 @@
 # This file is licensed under the terms of the GNU General Public
 # License version 2. This program is licensed "as is" without any
 # warranty of any kind, whether express or implied.
-
+DEST_LANG="zh_CN.UTF-8"	
 
 [[ -z $ROOTPWD ]] && ROOTPWD="poilkm" # Must be changed @first login
 [[ -z $OPI_USERNAME ]] && OPI_USERNAME="tony" 
