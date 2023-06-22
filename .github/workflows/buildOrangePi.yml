@@ -77,7 +77,7 @@ jobs:
           #pwd
           cd ..
           ZIPFILE="Armbian_OrangePi_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M").zip"
-          zip -r ${ZIPFILE}.zip orangepi-build/output/images/
+          zip -r ${ZIPFILE} orangepi-build/output/images/
           #zip -r ${ZIPFILE} orangepi-build/
           echo "zipfile=${ZIPFILE}" >> ${GITHUB_OUTPUT}
           #pwd
