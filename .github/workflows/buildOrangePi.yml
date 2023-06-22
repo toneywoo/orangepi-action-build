@@ -72,7 +72,7 @@ jobs:
           DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers,desktop_tools,remote_desktop" \
           COMPRESS_OUTPUTIMAGE=sha,img CONFIG="../config-example.conf"
           
-          echo "build_tag=Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
+          echo "build_tag=Armbian_OrangePi_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           
           #pwd
           cd ..
