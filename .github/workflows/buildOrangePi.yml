@@ -67,18 +67,18 @@ jobs:
           #cp ../config-default.conf ./userpatches/
           #cp ../config-example.conf ./userpatches/
           #cp -f ../configuration.sh ./scripts/
-          #sudo ./build.sh  BOARD=orangepi3-lts BRANCH=next BUILD_OPT=image RELEASE=jammy BUILD_MINIMAL=no \
-          #BUILD_DESKTOP=yes KERNEL_CONFIGURE=no DESKTOP_ENVIRONMENT=xfce \
-          #DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers,desktop_tools,remote_desktop" \
-          #COMPRESS_OUTPUTIMAGE=sha,img CONFIG="../config-example.conf"
+          sudo ./build.sh  BOARD=orangepi3-lts BRANCH=next BUILD_OPT=image RELEASE=jammy BUILD_MINIMAL=no \
+          BUILD_DESKTOP=yes KERNEL_CONFIGURE=no DESKTOP_ENVIRONMENT=xfce \
+          DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers,desktop_tools,remote_desktop" \
+          COMPRESS_OUTPUTIMAGE=sha,img CONFIG="../config-example.conf"
           
           echo "build_tag=Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
-          cd ..
-          pwd
           
+          #pwd
+          cd ..
           ZIPFILE="Armbian_OrangePi_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M").zip"
-          #zip -r ${ZIPFILE}.zip output/images/
-          zip -r ${ZIPFILE} orangepi-build/
+          zip -r ${ZIPFILE}.zip orangepi-build/output/images/
+          #zip -r ${ZIPFILE} orangepi-build/
           echo "zipfile=${ZIPFILE}" >> ${GITHUB_OUTPUT}
           #pwd
           #zip -r Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M").zip scripts/
@@ -87,6 +87,7 @@ jobs:
           pwd
           echo "++++++++++++++++++++++++++++++++++++++++++++++++++++"
           ls
+          echo "++++++++++++++++++++++++++++++++++++++++++++++++++++"
           echo ${ZIPFILE}
           echo "++++++++++++++++++++++++++++++++++++++++++++++++++++"
           echo "status=success" >> ${GITHUB_OUTPUT}
