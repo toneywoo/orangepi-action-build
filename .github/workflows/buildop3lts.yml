@@ -69,15 +69,19 @@ jobs:
           sudo ./compile.sh  BOARD=orangepi3-lts BRANCH=current RELEASE=${{ env.ARMBIAN_RELEASE }} \
           BUILD_MINIMAL=no BUILD_DESKTOP=yes KERNEL_CONFIGURE=prebuilt DESKTOP_ENVIRONMENT=xfce \
           DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="browsers,desktop_tools,remote_desktop" \
-          COMPRESS_OUTPUTIMAGE=sha,gz EXTERNAL=yes USE_GITHUB_UBOOT_MIRROR=yes \
+          COMPRESS_OUTPUTIMAGE=sha EXTERNAL=yes USE_GITHUB_UBOOT_MIRROR=yes \
           NO_APT_CACHER="yes"
           echo "build_tag=Armbian_op3lts_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
+          cd ..
+          ZIPFILE="Armbian_op3lts_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M").zip"
+          zip -r ${ZIPFILE} build/output/images/
+          echo "zipfile=${ZIPFILE}" >> ${GITHUB_OUTPUT}
       - name: Upload Armbian image to Release
         uses: ncipollo/release-action@main
         if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
         with:
           tag: ${{ steps.compile.outputs.build_tag }}
-          artifacts: build/output/images/*.img.gz
+          artifacts: ${{ steps.compile.outputs.zipfile }}
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
