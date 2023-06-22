@@ -79,10 +79,13 @@ jobs:
           ZIPFILE="Armbian_OrangePi_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M").zip"
           #zip -r ${ZIPFILE}.zip output/images/
           zip -r ${ZIPFILE} orangepi-build/
+          echo "zipfile=${ZIPFILE}" >> ${GITHUB_OUTPUT}
           #pwd
           #zip -r Armbian_Orange_${{ env.ARMBIAN_RELEASE }}_$(date +"%m.%d.%H%M").zip scripts/
           #zip -r scripts.zip scripts/
+          echo "++++++++++++++++++++++++++++++++++++++++++++++++++++"
           pwd
+          echo "++++++++++++++++++++++++++++++++++++++++++++++++++++"
           ls
           echo ${ZIPFILE}
           echo "++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -93,6 +96,6 @@ jobs:
         with:
           tag: ${{ steps.compile.outputs.build_tag }}
           #name: "OPI3LTS-RELEASE_$("%m.%d.%H%M")"
-          artifacts: ${ZIPFILE}
+          artifacts: ${{ steps.compile.outputs.zipfile }}
           #allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
