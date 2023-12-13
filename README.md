@@ -69,7 +69,7 @@ prepare_partitions()
 #
 
 ```
-这函数是实际的往镜像文件中写入数据
+这函数是实际的往镜像文件中写入数据-
 
 ```
 # stage: write u-boot
